@@ -123,9 +123,9 @@ local function updateSideWalls()
     if sideWallsEnabled then
         local humanoidRootPart = character.HumanoidRootPart
         
-        -- Calculate positions 2 studs to left and right of player
-        local rightPosition = humanoidRootPart.Position + (humanoidRootPart.CFrame.RightVector * 2.5)
-        local leftPosition = humanoidRootPart.Position + (humanoidRootPart.CFrame.RightVector * -2.5)
+        -- Calculate positions in studs to left and right of player
+        local rightPosition = humanoidRootPart.Position + (humanoidRootPart.CFrame.RightVector * 3)
+        local leftPosition = humanoidRootPart.Position + (humanoidRootPart.CFrame.RightVector * -3)
         
         -- Create right wall
         rightWall = Instance.new("Part")
