@@ -7,7 +7,7 @@ local workspace = game:GetService("Workspace")
 local tweenservice = game:GetService("TweenService")
 
 -- [[ ui setup - Obsidian Library ]]
-local Repository = "https://raw.githubuserDescription.com/deividcomsono/Obsidian/main/"
+local Repository = "https://raw.githubusercontent.com/deividcomsono/Obsidian/main/"
 local Library = loadstring(game:HttpGet(Repository .. "Library.lua"))()
 local ThemeManager = loadstring(game:HttpGet(Repository .. "addons/ThemeManager.lua"))()
 local SaveManager = loadstring(game:HttpGet(Repository .. "addons/SaveManager.lua"))()
@@ -161,13 +161,13 @@ local function updateSideWalls()
         
         Library:Notify({
             Title = "Side Walls",
-            Description = "Collision walls spawned" .. (invisibleWalls and " (invisible)" or ""),
+            Content = "Collision walls spawned" .. (invisibleWalls and " (invisible)" or ""),
             Time = 2
         })
     else
         Library:Notify({
             Title = "Side Walls", 
-            Description = "Side walls removed",
+            Content = "Side walls removed",
             Time = 2
         })
     end
@@ -194,7 +194,7 @@ Toggles.MS_SideWallsInvisible:OnChanged(function(value)
         
         Library:Notify({
             Title = "Side Walls",
-            Description = value and "Walls are now invisible" or "Walls are now visible",
+            Content = value and "Walls are now invisible" or "Walls are now visible",
             Time = 2
         })
     end
@@ -257,7 +257,7 @@ local function createCancelWall()
     
     Library:Notify({
         Title = "Walkspeed Cancel",
-        Description = "Temporary wall spawned for 0.5 seconds",
+        Content = "Temporary wall spawned for 0.5 seconds",
         Time = 2
     })
 end
@@ -550,7 +550,7 @@ local function completecurrentpuzzle()
         local finalprogress = progress.Value
         Library:Notify({
             Title = "Generator Completed", 
-            Description = "Progress: " .. currentprogress .. " → " .. finalprogress .. "/104", 
+            Content = "Progress: " .. currentprogress .. " → " .. finalprogress .. "/104", 
             Time = 3
         })
     end)
@@ -595,11 +595,11 @@ Toggles.MC_InfiniteStamina:OnChanged(function(value)
         staminaconnection = runservice.Heartbeat:Connect(function()
             pcall(function() require(game.ReplicatedStorage.Systems.Character.Game.Sprinting).StaminaLossDisabled = true end)
         end)
-        Library:Notify({Title = "Infinite Stamina Enabled", Description = "You now have unlimited stamina", Time = 3})
+        Library:Notify({Title = "Infinite Stamina Enabled", Content = "You now have unlimited stamina", Time = 3})
     else
         if staminaconnection then staminaconnection:Disconnect() staminaconnection = nil end
         pcall(function() require(game.ReplicatedStorage.Systems.Character.Game.Sprinting).StaminaLossDisabled = false end)
-        Library:Notify({Title = "Infinite Stamina Disabled", Description = "Stamina consumption is now normal", Time = 3})
+        Library:Notify({Title = "Infinite Stamina Disabled", Content = "Stamina consumption is now normal", Time = 3})
     end
 end)
 
@@ -607,10 +607,10 @@ Toggles.MG_AutoComplete:OnChanged(function(value)
     autocompleteenabled = value
     if value then
         setuppuzzledetection()
-        Library:Notify({Title = "Auto-Complete Enabled", Description = "Generators will complete automatically", Time = 3})
+        Library:Notify({Title = "Auto-Complete Enabled", Content = "Generators will complete automatically", Time = 3})
     else
         if puzzleuiconnection then puzzleuiconnection:Disconnect() puzzleuiconnection = nil end
-        Library:Notify({Title = "Auto-Complete Disabled", Description = "Manual generator completion required", Time = 3})
+        Library:Notify({Title = "Auto-Complete Disabled", Content = "Manual generator completion required", Time = 3})
     end
 end)
 
@@ -623,7 +623,7 @@ Toggles.VE_EnableESP:OnChanged(function(value)
     if not value then 
         clearesp()
     end
-    Library:Notify({Title = "ESP " .. (value and "Enabled" or "Disabled"), Description = "Visual indicators are now " .. (value and "visible" or "hidden"), Time = 3})
+    Library:Notify({Title = "ESP " .. (value and "Enabled" or "Disabled"), Content = "Visual indicators are now " .. (value and "visible" or "hidden"), Time = 3})
 end)
 
 Toggles.VF_CustomFOV:OnChanged(function(value)
@@ -633,7 +633,7 @@ Toggles.VF_CustomFOV:OnChanged(function(value)
     else
         updatefov(Options.VF_FOVValue.Value)
     end
-    Library:Notify({Title = "Custom FOV " .. (value and "Enabled" or "Disabled"), Description = value and "FOV controls active" or "FOV reset to default", Time = 3})
+    Library:Notify({Title = "Custom FOV " .. (value and "Enabled" or "Disabled"), Content = value and "FOV controls active" or "FOV reset to default", Time = 3})
 end)
 
 Options.VF_FOVValue:OnChanged(function(value)
@@ -714,4 +714,4 @@ player.CharacterAdded:Connect(function(newcharacter)
 end)
 
 -- [[ initial notification ]]
-Library:Notify({Title = "BunnyHub" .. ScriptVersion .. " Loaded", Description = "All features are now active!", Time = 6})
+Library:Notify({Title = "BunnyHub" .. ScriptVersion .. " Loaded", Content = "All features are now active!", Time = 6})
