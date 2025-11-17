@@ -32,6 +32,8 @@ local character = player.Character or player.CharacterAdded:Wait()
 -- [[ system variables ]]
 local staminaenabled = false
 local staminaconnection = nil
+local directionalLeanRemoved = false
+local originalDirectionalMovement = nil
 
 -- [[ generator system ]]
 local autocompleteenabled = false
@@ -129,6 +131,7 @@ local Window = Library:CreateWindow({
 local Tabs = {
     Main = Window:AddTab("Main", "house"),
     Visuals = Window:AddTab("Visuals", "scan-eye"),
+    Exploits = Window:AddTab("Exploits", "shield-alert"),
     Config = Window:AddTab("Config", "folder-cog")
 }
 
@@ -446,6 +449,40 @@ VF_CustomFOV_True:AddSlider("VF_FOVValue", {
     Suffix = "°"
 })
 VF_CustomFOV_True:SetupDependencies({ { Toggles.VF_CustomFOV, true } })
+
+-- [[ Exploits Tab ]]
+local ExploitsRemovals = Tabs.Exploits:AddLeftGroupbox("Visual Removals")
+ExploitsRemovals:AddToggle("ER_AntiJohndoeTrail", { 
+    Text = "Anti-John Doe Trail", 
+    Default = false
+})
+
+ExploitsRemovals:AddToggle("ER_AntiJohndoeFootprint", { 
+    Text = "Anti-John Doe Footprint", 
+    Default = false
+})
+
+ExploitsRemovals:AddToggle("ER_NoliClones", { 
+    Text = "Noli Fake Clones", 
+    Default = false
+})
+
+ExploitsRemovals:AddToggle("ER_NoliSurvivorAbilities", { 
+    Text = "Noli Fake Abilities", 
+    Default = false
+})
+
+local ExploitsAutomation = Tabs.Exploits:AddRightGroupbox("Automation")
+ExploitsAutomation:AddToggle("EA_1xPopups", { 
+    Text = "Close Popups", 
+    Default = false
+})
+
+ExploitsRemovals:AddToggle("ER_NoDirectionalLean", { 
+    Text = "No Directional Lean", 
+    Default = false,
+    Tooltip = "Removes character leaning when moving sideways/backwards"
+})
 
 -- [[ esp management ]]
 local function createesp(object, color, name, outlinecolor)
@@ -844,6 +881,89 @@ local function updateesp()
     if espsettings.traps.enabled then updatetrapesp() end
 end
 
+-- [[ Simple Removal System ]]
+local function removeBadStuff()
+    -- Remove John Doe trails
+    if Toggles.ER_AntiJohndoeTrail.Value then
+        for _, thing in workspace:GetDescendants() do
+            if thing.Name == "Trail" then
+                thing.CanTouch = false
+            end
+        end
+    end
+    
+    -- Remove John Doe footprints  
+    if Toggles.ER_AntiJohndoeFootprint.Value then
+        for _, thing in workspace:GetDescendants() do
+            if thing.Name == "Shadow" then
+                thing.CanTouch = false
+            end
+        end
+    end
+end
+
+local function closeAnnoyingPopups()
+    if Toggles.EA_1xPopups.Value then
+        local gui = player.PlayerGui
+        if gui and gui:FindFirstChild("TemporaryUI") then
+            local popup = gui.TemporaryUI:FindFirstChild("1x1x1x1Popup")
+            if popup then
+                popup:Destroy()
+            end
+        end
+    end
+end
+
+local function setupDirectionalLeanRemoval()
+    local success, directionalModule = pcall(function()
+        return require(game.ReplicatedStorage.Systems.Character.QualityOfLife.DirectionalMovement)
+    end)
+    
+    if success and directionalModule then
+        originalDirectionalMovement = directionalModule.Start
+        
+        if Toggles.ER_NoDirectionalLean.Value then
+            -- Disable the directional movement system
+            directionalModule.Start = function(...)
+                return -- Do nothing, effectively disabling the system
+            end
+            
+            -- Reset current character if it exists
+            if character and character:FindFirstChild("Torso") then
+                local torso = character.Torso
+                if torso:FindFirstChild("Left Hip") then
+                    torso["Left Hip"].C0 = CFrame.new(-1, -1, 0) * CFrame.Angles(0, math.rad(-90), 0)
+                end
+                if torso:FindFirstChild("Left Shoulder") then
+                    torso["Left Shoulder"].C0 = CFrame.new(-1, 0.5, 0) * CFrame.Angles(0, math.rad(-90), 0)
+                end
+                if torso:FindFirstChild("Neck") then
+                    torso.Neck.C0 = CFrame.new(0, 1, 0) * CFrame.Angles(math.rad(90), math.rad(180), 0)
+                end
+                if torso:FindFirstChild("Right Hip") then
+                    torso["Right Hip"].C0 = CFrame.new(1, -1, 0) * CFrame.Angles(0, math.rad(90), 0)
+                end
+                if torso:FindFirstChild("Right Shoulder") then
+                    torso["Right Shoulder"].C0 = CFrame.new(1, 0.5, 0) * CFrame.Angles(0, math.rad(90), 0)
+                end
+            end
+        else
+            -- Restore original function
+            if originalDirectionalMovement then
+                directionalModule.Start = originalDirectionalMovement
+                -- Re-initialize directional movement
+                if character then
+                    task.spawn(function()
+                        setidentity(2) -- Set to normal security level
+                        directionalModule.Start()
+                        setidentity(8) -- Set back to script security level
+                    end)
+                end
+            end
+        end
+    end
+end
+
 -- [[ generator completion ]]
 local function findcurrentgenerator()
     if not character or not character:FindFirstChild("HumanoidRootPart") then return nil end
@@ -1100,6 +1220,56 @@ Toggles.VE_TrapESP_Tripwire:OnChanged(function(value)
     if espenabled then updateesp() end
 end)
 
+-- [[ Exploit Toggle Notifications ]]
+Toggles.ER_AntiJohndoeTrail:OnChanged(function(value)
+    Library:Notify({
+        Title = "John Doe Trail",
+        Content = value and "Removed" or "Enabled",
+        Time = 3
+    })
+end)
+
+Toggles.ER_AntiJohndoeFootprint:OnChanged(function(value)
+    Library:Notify({
+        Title = "John Doe Footprint", 
+        Content = value and "Removed" or "Enabled",
+        Time = 3
+    })
+end)
+
+Toggles.ER_NoliClones:OnChanged(function(value)
+    Library:Notify({
+        Title = "Noli Clones",
+        Content = value and "Blocked" or "Enabled", 
+        Time = 3
+    })
+end)
+
+Toggles.ER_NoliSurvivorAbilities:OnChanged(function(value)
+    Library:Notify({
+        Title = "Noli Abilities",
+        Content = value and "Blocked" or "Enabled",
+        Time = 3
+    })
+end)
+
+Toggles.EA_1xPopups:OnChanged(function(value)
+    Library:Notify({
+        Title = "Popup Closer",
+        Content = value and "Enabled" or "Disabled",
+        Time = 3
+    })
+end)
+
+Toggles.ER_NoDirectionalLean:OnChanged(function(value)
+    setupDirectionalLeanRemoval()
+    Library:Notify({
+        Title = "Directional Lean",
+        Content = value and "Removed" or "Enabled",
+        Time = 3
+    })
+end)
+
 -- [[ config tab setup ]]
 task.spawn(function()
     -- Apply custom UI styling like your friend's script
@@ -1141,12 +1311,12 @@ task.spawn(function()
 
     -- Theme setup
     local BunnyTheme = {
-        BackgroundColor = Color3.fromRGB(15, 15, 15),
-        OutlineColor = Color3.fromRGB(40, 40, 40),
-        MainColor = Color3.fromRGB(25, 25, 25),
-        AccentColor = Color3.new(0.8, 0.2, 0.8), -- Purple accent for Bunny
+        BackgroundColor = Color3.fromRGB(28, 28, 28),
+        OutlineColor = Color3.fromRGB(55, 55, 55),
+        MainColor = Color3.fromRGB(36, 36, 36),
+        AccentColor = Color3.fromRGB(61, 180, 136), -- Purple accent for Bunny
         FontColor = Color3.new(1, 1, 1),
-        FontFace = "BuilderSans"
+        FontFace = "RobotoMono"
     }
 
     ThemeManager:SetLibrary(Library)
@@ -1163,7 +1333,11 @@ task.spawn(function()
 end)
 
 -- [[ main loops ]]
-local espconnection = runservice.Heartbeat:Connect(updateesp)
+local espconnection = runservice.Heartbeat:Connect(function()
+    updateesp()
+    removeBadStuff()
+    closeAnnoyingPopups()
+end)
 
 -- [[ respawn handling ]]
 player.CharacterAdded:Connect(function(newcharacter) 
