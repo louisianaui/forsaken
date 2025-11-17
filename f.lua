@@ -32,8 +32,6 @@ local character = player.Character or player.CharacterAdded:Wait()
 -- [[ system variables ]]
 local staminaenabled = false
 local staminaconnection = nil
-local directionalLeanRemoved = false
-local originalDirectionalMovement = nil
 
 -- [[ generator system ]]
 local autocompleteenabled = false
@@ -478,12 +476,6 @@ ExploitsAutomation:AddToggle("EA_1xPopups", {
     Default = false
 })
 
-ExploitsRemovals:AddToggle("ER_NoDirectionalLean", { 
-    Text = "No Directional Lean", 
-    Default = false,
-    Tooltip = "Removes character leaning when moving sideways/backwards"
-})
-
 -- [[ esp management ]]
 local function createesp(object, color, name, outlinecolor)
     if espobjects[object] then return end
@@ -745,7 +737,7 @@ local function updateminionesp()
                 if not espobjects[v] then
                     createesp(v, espsettings.minions.friendly.color, "Friendly Minion", espsettings.minions.friendly.outline)
                 end
-            elseif v:GetAttribute("Team") and v:GetAttribute("Team") == "Killers" and v:FindFirstChild("Humanoid") and espsettings.minions.enemy.enabled then
+            elseif v:GetAttribute("Team") and v:GetAttribute("Team") == "Killers" and v:FindFirstChild("Humanoid") and espsettings.minions.enabled and espsettings.minions.enemy.enabled then
                 if not espobjects[v] then
                     createesp(v, espsettings.minions.enemy.color, "Enemy Minion", espsettings.minions.enemy.outline)
                 end
@@ -909,56 +901,6 @@ local function closeAnnoyingPopups()
             local popup = gui.TemporaryUI:FindFirstChild("1x1x1x1Popup")
             if popup then
                 popup:Destroy()
-            end
-        end
-    end
-end
-
-local function setupDirectionalLeanRemoval()
-    local success, directionalModule = pcall(function()
-        return require(game.ReplicatedStorage.Systems.Character.QualityOfLife.DirectionalMovement)
-    end)
-    
-    if success and directionalModule then
-        originalDirectionalMovement = directionalModule.Start
-        
-        if Toggles.ER_NoDirectionalLean.Value then
-            -- Disable the directional movement system
-            directionalModule.Start = function(...)
-                return -- Do nothing, effectively disabling the system
-            end
-            
-            -- Reset current character if it exists
-            if character and character:FindFirstChild("Torso") then
-                local torso = character.Torso
-                if torso:FindFirstChild("Left Hip") then
-                    torso["Left Hip"].C0 = CFrame.new(-1, -1, 0) * CFrame.Angles(0, math.rad(-90), 0)
-                end
-                if torso:FindFirstChild("Left Shoulder") then
-                    torso["Left Shoulder"].C0 = CFrame.new(-1, 0.5, 0) * CFrame.Angles(0, math.rad(-90), 0)
-                end
-                if torso:FindFirstChild("Neck") then
-                    torso.Neck.C0 = CFrame.new(0, 1, 0) * CFrame.Angles(math.rad(90), math.rad(180), 0)
-                end
-                if torso:FindFirstChild("Right Hip") then
-                    torso["Right Hip"].C0 = CFrame.new(1, -1, 0) * CFrame.Angles(0, math.rad(90), 0)
-                end
-                if torso:FindFirstChild("Right Shoulder") then
-                    torso["Right Shoulder"].C0 = CFrame.new(1, 0.5, 0) * CFrame.Angles(0, math.rad(90), 0)
-                end
-            end
-        else
-            -- Restore original function
-            if originalDirectionalMovement then
-                directionalModule.Start = originalDirectionalMovement
-                -- Re-initialize directional movement
-                if character then
-                    task.spawn(function()
-                        setidentity(2) -- Set to normal security level
-                        directionalModule.Start()
-                        setidentity(8) -- Set back to script security level
-                    end)
-                end
             end
         end
     end
@@ -1257,15 +1199,6 @@ Toggles.EA_1xPopups:OnChanged(function(value)
     Library:Notify({
         Title = "Popup Closer",
         Content = value and "Enabled" or "Disabled",
-        Time = 3
-    })
-end)
-
-Toggles.ER_NoDirectionalLean:OnChanged(function(value)
-    setupDirectionalLeanRemoval()
-    Library:Notify({
-        Title = "Directional Lean",
-        Content = value and "Removed" or "Enabled",
         Time = 3
     })
 end)
