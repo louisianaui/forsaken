@@ -237,13 +237,13 @@ local function updateSideWalls()
         
         Library:Notify({
             Title = "Side Walls",
-            Content = "Collision walls spawned" .. (invisibleWalls and " (invisible)" or ""),
+            Description = "Collision walls spawned" .. (invisibleWalls and " (invisible)" or ""),
             Time = 2
         })
     else
         Library:Notify({
             Title = "Side Walls", 
-            Content = "Side walls removed",
+            Description = "Side walls removed",
             Time = 2
         })
     end
@@ -264,7 +264,7 @@ Toggles.MS_SideWallsInvisible:OnChanged(function(value)
         
         Library:Notify({
             Title = "Side Walls",
-            Content = value and "Walls are now invisible" or "Walls are now visible",
+            Description = value and "Walls are now invisible" or "Walls are now visible",
             Time = 2
         })
     end
@@ -322,7 +322,7 @@ local function createCancelWall()
     
     Library:Notify({
         Title = "Walkspeed Cancel",
-        Content = "Temporary wall spawned for 0.5 seconds",
+        Description = "Temporary wall spawned for 0.5 seconds",
         Time = 2
     })
 end
@@ -981,7 +981,7 @@ local function completecurrentpuzzle()
         local finalprogress = progress.Value
         Library:Notify({
             Title = "Generator Completed", 
-            Content = "Progress: " .. currentprogress .. " → " .. finalprogress .. "/104", 
+            Description = "Progress: " .. currentprogress .. " → " .. finalprogress .. "/104", 
             Time = 3
         })
     end)
@@ -1029,7 +1029,7 @@ Toggles.MC_InfiniteStamina:OnChanged(function(value)
                 sprintingModule.StaminaLossDisabled = true
             end
         end)    
-        Library:Notify({Title = "Infinite Stamina Enabled", Content = "You now have unlimited stamina", Time = 3})
+        Library:Notify({Title = "Infinite Stamina Enabled", Description = "You now have unlimited stamina", Time = 3})
     else
         pcall(function()
             local sprintingModule = require(ReplicatedStorage.Systems.Character.Game.Sprinting)
@@ -1037,7 +1037,7 @@ Toggles.MC_InfiniteStamina:OnChanged(function(value)
                 sprintingModule.StaminaLossDisabled = false
             end
         end)  
-        Library:Notify({Title = "Infinite Stamina Disabled", Content = "Stamina consumption is now normal", Time = 3})
+        Library:Notify({Title = "Infinite Stamina Disabled", Description = "Stamina consumption is now normal", Time = 3})
     end
 end)
 
@@ -1045,10 +1045,10 @@ Toggles.MG_AutoComplete:OnChanged(function(value)
     autocompleteenabled = value
     if value then
         setuppuzzledetection()
-        Library:Notify({Title = "Auto-Complete Enabled", Content = "Generators will complete automatically", Time = 3})
+        Library:Notify({Title = "Auto-Complete Enabled", Description = "Generators will complete automatically", Time = 3})
     else
         if puzzleuiconnection then puzzleuiconnection:Disconnect() puzzleuiconnection = nil end
-        Library:Notify({Title = "Auto-Complete Disabled", Content = "Manual generator completion required", Time = 3})
+        Library:Notify({Title = "Auto-Complete Disabled", Description = "Manual generator completion required", Time = 3})
     end
 end)
 
@@ -1060,9 +1060,9 @@ Toggles.VE_EnableESP:OnChanged(function(value)
     espenabled = value
     if not value then 
         clearesp()
-        Library:Notify({Title = "ESP Disabled", Content = "All ESP features disabled", Time = 3})
+        Library:Notify({Title = "ESP Disabled", Description = "All ESP features disabled", Time = 3})
     else
-        Library:Notify({Title = "ESP Enabled", Content = "ESP features activated", Time = 3})
+        Library:Notify({Title = "ESP Enabled", Description = "ESP features activated", Time = 3})
         updateesp()
     end
 end)
@@ -1074,7 +1074,7 @@ Toggles.VF_CustomFOV:OnChanged(function(value)
     else
         updatefov(Options.VF_FOVValue.Value)
     end
-    Library:Notify({Title = "Custom FOV " .. (value and "Enabled" or "Disabled"), Content = value and "FOV controls active" or "FOV reset to default", Time = 3})
+    Library:Notify({Title = "Custom FOV " .. (value and "Enabled" or "Disabled"), Description = value and "FOV controls active" or "FOV reset to default", Time = 3})
 end)
 
 Options.VF_FOVValue:OnChanged(function(value)
@@ -1166,7 +1166,7 @@ end)
 Toggles.ER_AntiJohndoeTrail:OnChanged(function(value)
     Library:Notify({
         Title = "John Doe Trail",
-        Content = value and "Removed" or "Enabled",
+        Description = value and "Removed" or "Enabled",
         Time = 3
     })
 end)
@@ -1174,7 +1174,7 @@ end)
 Toggles.ER_AntiJohndoeFootprint:OnChanged(function(value)
     Library:Notify({
         Title = "John Doe Footprint", 
-        Content = value and "Removed" or "Enabled",
+        Description = value and "Removed" or "Enabled",
         Time = 3
     })
 end)
@@ -1182,7 +1182,7 @@ end)
 Toggles.ER_NoliClones:OnChanged(function(value)
     Library:Notify({
         Title = "Noli Clones",
-        Content = value and "Blocked" or "Enabled", 
+        Description = value and "Blocked" or "Enabled", 
         Time = 3
     })
 end)
@@ -1190,7 +1190,7 @@ end)
 Toggles.ER_NoliSurvivorAbilities:OnChanged(function(value)
     Library:Notify({
         Title = "Noli Abilities",
-        Content = value and "Blocked" or "Enabled",
+        Description = value and "Blocked" or "Enabled",
         Time = 3
     })
 end)
@@ -1198,7 +1198,7 @@ end)
 Toggles.EA_1xPopups:OnChanged(function(value)
     Library:Notify({
         Title = "Popup Closer",
-        Content = value and "Enabled" or "Disabled",
+        Description = value and "Enabled" or "Disabled",
         Time = 3
     })
 end)
@@ -1279,4 +1279,4 @@ player.CharacterAdded:Connect(function(newcharacter)
 end)
 
 -- [[ initial notification ]]
-Library:Notify({Title = "BunnyHub" .. ScriptVersion .. " Loaded", Content = "All features are now active!", Time = 6})
+Library:Notify({Title = "BunnyHub" .. ScriptVersion .. " Loaded", Description = "All features are now active!", Time = 6})
