@@ -502,8 +502,8 @@ local function createesp(object, color, name, outlinecolor)
     highlight.Adornee = object
     highlight.FillColor = color
     highlight.OutlineColor = outlinecolor or color
-    highlight.FillTransparency = 0.6
-    highlight.OutlineTransparency = 0.35
+    highlight.FillTransparency = 0.5
+    highlight.OutlineTransparency = 0
     highlight.Parent = game.CoreGui
     
     local billboard = Instance.new("BillboardGui")
