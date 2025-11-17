@@ -43,7 +43,7 @@ local espenabled = false
 -- [[ ui initialization - Obsidian Style ]]
 local ScriptVersion = "v1.0.0"
 local Window = Library:CreateWindow({
-    Title = "louisiana", 
+    Title = "BunnyHub", 
     Icon = nil, 
     Footer = ScriptVersion, 
     Center = true, 
@@ -303,7 +303,7 @@ local function createesp(object, color, name)
     if espobjects[object] then return end
     
     local highlight = Instance.new("Highlight")
-    highlight.Name = "louisianaESP"
+    highlight.Name = "BunnyHubESP"
     highlight.Adornee = object
     highlight.FillColor = color
     highlight.OutlineColor = color
@@ -312,7 +312,7 @@ local function createesp(object, color, name)
     highlight.Parent = game.CoreGui
     
     local billboard = Instance.new("BillboardGui")
-    billboard.Name = "louisianaLabel"
+    billboard.Name = "BunnyHubLabel"
     billboard.Adornee = object
     billboard.Size = UDim2.new(0, 200, 0, 50)
     billboard.StudsOffset = Vector3.new(0, 3, 0)
@@ -655,7 +655,7 @@ task.spawn(function()
     end
 
     Library:SetWatermarkVisibility(true)
-    Library:SetWatermark(`[ {ScriptVersion} ] louisiana `)
+    Library:SetWatermark(`[ {ScriptVersion} ] BunnyHub `)
     Library.ShowCustomCursor = false
 
     local MenuProperties = Tabs.Config:AddLeftGroupbox("Menu")
@@ -714,4 +714,4 @@ player.CharacterAdded:Connect(function(newcharacter)
 end)
 
 -- [[ initial notification ]]
-Library:Notify({Title = "louisiana" .. ScriptVersion .. " Loaded", Content = "All features are now active!", Duration = 6})
+Library:Notify({Title = "BunnyHub" .. ScriptVersion .. " Loaded", Content = "All features are now active!", Duration = 6})
