@@ -35,7 +35,7 @@ local staminaconnection = nil
 
 -- [[ generator system ]]
 local autocompleteenabled = false
-local completiondelay = 1
+local completiondelay = 2.5 -- temp fix for gen completion delay cus the fucking slider is broken :steamsad:
 local currentgenerator = nil
 local generatorconnection = nil
 local puzzleuiconnection = nil
