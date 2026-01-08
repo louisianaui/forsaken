@@ -1,4 +1,4 @@
---// loadstring(game:httpget("https://raw.githubusercontent.com/louisianaui/forsaken/refs/heads/main/f.lua"))()
+--// loadstring(game:HttpGet("https://raw.githubusercontent.com/louisianaui/forsaken/refs/heads/main/f.lua"))()
 
 task.spawn(function()
     if not game:IsLoaded() then game.Loaded:Wait() end
